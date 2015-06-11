@@ -1,5 +1,7 @@
 package ca.owenpeterson.messenger.resources;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
 import javax.ws.rs.BeanParam;
@@ -11,7 +13,10 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import ca.owenpeterson.messenger.model.Message;
 import ca.owenpeterson.messenger.resources.beans.MessageFilterBean;
@@ -37,8 +42,15 @@ public class MessageResource {
 	}
 	
 	@POST
-	public Message addMessage(Message message) {
-		return messageService.addMessage(message);		
+	public Response addMessage(Message message, @Context UriInfo uriInfo) throws URISyntaxException {
+		Message newMessage = messageService.addMessage(message);
+		String newId = String.valueOf(newMessage.getId());
+		
+		//gets base URI and then adds the new Id to it.
+		URI uri = uriInfo.getAbsolutePathBuilder().path(newId).build();
+		
+		//return the location of the new resource in the headers along with the response body
+		return Response.created(uri).entity(newMessage).build();		
 	}
 	
 	@PUT
