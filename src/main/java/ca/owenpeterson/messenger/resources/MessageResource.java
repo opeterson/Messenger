@@ -1,7 +1,6 @@
 package ca.owenpeterson.messenger.resources;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.List;
 
 import javax.ws.rs.BeanParam;
@@ -42,7 +41,7 @@ public class MessageResource {
 	}
 	
 	@POST
-	public Response addMessage(Message message, @Context UriInfo uriInfo) throws URISyntaxException {
+	public Response addMessage(Message message, @Context UriInfo uriInfo) {
 		Message newMessage = messageService.addMessage(message);
 		String newId = String.valueOf(newMessage.getId());
 		
