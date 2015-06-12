@@ -68,13 +68,21 @@ public class MessageResource {
 	
 	@GET
 	@Path("/{messageId}")
-	public Message getMessage(@PathParam("messageId") long messageId) {
-		return messageService.getMessage(messageId);		
+	public Message getMessage(@PathParam("messageId") long messageId, @Context UriInfo uriInfo) {
+		Message message = messageService.getMessage(messageId);
+		message.addLink(getUriForSelf(uriInfo, message),"self");
+		return message;
+	}
+
+	private String getUriForSelf(UriInfo uriInfo, Message message) {
+		String uri = uriInfo.getBaseUriBuilder().path(MessageResource.class).path(Long.toString(message.getId())).toString();
+		return uri;
 	}
 	
 	@Path("/{messageId}/comments")
 	public CommentResource getCommentResource() {
 		return new CommentResource();
 	}
+
 	
 }
